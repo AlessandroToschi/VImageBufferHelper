@@ -10,6 +10,11 @@
 		18A938E72621B798007BB7DE /* VImageBufferHelper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A938DD2621B798007BB7DE /* VImageBufferHelper.framework */; };
 		18A938EC2621B798007BB7DE /* VImageBufferHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A938EB2621B798007BB7DE /* VImageBufferHelperTests.swift */; };
 		18A938EE2621B798007BB7DE /* VImageBufferHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 18A938E02621B798007BB7DE /* VImageBufferHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		18A938FA2621B7CE007BB7DE /* VImageBufferWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A938F92621B7CE007BB7DE /* VImageBufferWrapper.swift */; };
+		18A938FF2621B7DB007BB7DE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A938FE2621B7DB007BB7DE /* Accelerate.framework */; };
+		18A939032621CFD9007BB7DE /* VImageBufferWeakWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A939022621CFD9007BB7DE /* VImageBufferWeakWrapper.swift */; };
+		18A939072621D141007BB7DE /* VImageBufferWeakWrapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A939062621D141007BB7DE /* VImageBufferWeakWrapperTests.swift */; };
+		18A939132621DDEA007BB7DE /* VImagePixelFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A939122621DDEA007BB7DE /* VImagePixelFormat.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +34,11 @@
 		18A938E62621B798007BB7DE /* VImageBufferHelperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VImageBufferHelperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		18A938EB2621B798007BB7DE /* VImageBufferHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VImageBufferHelperTests.swift; sourceTree = "<group>"; };
 		18A938ED2621B798007BB7DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18A938F92621B7CE007BB7DE /* VImageBufferWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VImageBufferWrapper.swift; sourceTree = "<group>"; };
+		18A938FE2621B7DB007BB7DE /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
+		18A939022621CFD9007BB7DE /* VImageBufferWeakWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VImageBufferWeakWrapper.swift; sourceTree = "<group>"; };
+		18A939062621D141007BB7DE /* VImageBufferWeakWrapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VImageBufferWeakWrapperTests.swift; sourceTree = "<group>"; };
+		18A939122621DDEA007BB7DE /* VImagePixelFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VImagePixelFormat.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18A938FF2621B7DB007BB7DE /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,6 +67,7 @@
 				18A938DF2621B798007BB7DE /* VImageBufferHelper */,
 				18A938EA2621B798007BB7DE /* VImageBufferHelperTests */,
 				18A938DE2621B798007BB7DE /* Products */,
+				18A938FD2621B7DB007BB7DE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,6 +85,9 @@
 			children = (
 				18A938E02621B798007BB7DE /* VImageBufferHelper.h */,
 				18A938E12621B798007BB7DE /* Info.plist */,
+				18A938F92621B7CE007BB7DE /* VImageBufferWrapper.swift */,
+				18A939022621CFD9007BB7DE /* VImageBufferWeakWrapper.swift */,
+				18A939122621DDEA007BB7DE /* VImagePixelFormat.swift */,
 			);
 			path = VImageBufferHelper;
 			sourceTree = "<group>";
@@ -82,8 +97,17 @@
 			children = (
 				18A938EB2621B798007BB7DE /* VImageBufferHelperTests.swift */,
 				18A938ED2621B798007BB7DE /* Info.plist */,
+				18A939062621D141007BB7DE /* VImageBufferWeakWrapperTests.swift */,
 			);
 			path = VImageBufferHelperTests;
+			sourceTree = "<group>";
+		};
+		18A938FD2621B7DB007BB7DE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				18A938FE2621B7DB007BB7DE /* Accelerate.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,6 +171,7 @@
 				TargetAttributes = {
 					18A938DC2621B798007BB7DE = {
 						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1240;
 					};
 					18A938E52621B798007BB7DE = {
 						CreatedOnToolsVersion = 12.4;
@@ -194,6 +219,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18A939132621DDEA007BB7DE /* VImagePixelFormat.swift in Sources */,
+				18A939032621CFD9007BB7DE /* VImageBufferWeakWrapper.swift in Sources */,
+				18A938FA2621B7CE007BB7DE /* VImageBufferWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,6 +229,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18A939072621D141007BB7DE /* VImageBufferWeakWrapperTests.swift in Sources */,
 				18A938EC2621B798007BB7DE /* VImageBufferHelperTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -341,6 +370,7 @@
 		18A938F22621B798007BB7DE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 4UA7W8VRF2;
@@ -349,6 +379,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = VImageBufferHelper/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -357,14 +388,17 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.aleto.VImageBufferHelper;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		18A938F32621B798007BB7DE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 4UA7W8VRF2;
@@ -373,6 +407,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = VImageBufferHelper/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -381,14 +416,16 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.aleto.VImageBufferHelper;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
 		18A938F52621B798007BB7DE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4UA7W8VRF2;
 				INFOPLIST_FILE = VImageBufferHelperTests/Info.plist;
@@ -407,6 +444,7 @@
 		18A938F62621B798007BB7DE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4UA7W8VRF2;
 				INFOPLIST_FILE = VImageBufferHelperTests/Info.plist;
