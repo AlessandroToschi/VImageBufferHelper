@@ -7,7 +7,8 @@
 
 import Foundation
 
-public enum VImagePixelFormat {
+
+public enum VImagePixelFormat: CaseIterable {
     case rgba8
     case rgbaF
     
@@ -58,4 +59,35 @@ public enum VImagePixelFormat {
     
     public var bytesPerPixel: Int { self.bitsPerPixel / 8 }
     
+    public var type: VImagePixelFormatConvertible.Type {
+        switch self {
+            case .rgba8, .bgra8, .argb8, .abgr8:
+                return SIMD4<UInt8>.self
+                
+            case .rgbaF, .bgraF, .argbF, .abgrF:
+                return SIMD4<Float>.self
+                
+            case .rgb8, .bgr8:
+                return SIMD3<UInt8>.self
+                
+            case .rgbF, .bgrF:
+                return SIMD3<Float>.self
+                
+            case .mono8:
+                return UInt8.self
+                
+            case .monoF:
+                return Float.self
+        }
+    }
+    
+    
+
 }
+
+public protocol VImagePixelFormatConvertible { }
+
+extension UInt8: VImagePixelFormatConvertible { }
+extension Float: VImagePixelFormatConvertible { }
+extension SIMD3: VImagePixelFormatConvertible where Scalar: VImagePixelFormatConvertible { }
+extension SIMD4: VImagePixelFormatConvertible where Scalar: VImagePixelFormatConvertible { }

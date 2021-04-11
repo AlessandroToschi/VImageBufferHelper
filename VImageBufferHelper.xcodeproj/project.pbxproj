@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		18996519262325B500146FBB /* VImageBufferWrapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18996518262325B500146FBB /* VImageBufferWrapperTests.swift */; };
 		18A938E72621B798007BB7DE /* VImageBufferHelper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A938DD2621B798007BB7DE /* VImageBufferHelper.framework */; };
 		18A938EC2621B798007BB7DE /* VImageBufferHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A938EB2621B798007BB7DE /* VImageBufferHelperTests.swift */; };
 		18A938EE2621B798007BB7DE /* VImageBufferHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 18A938E02621B798007BB7DE /* VImageBufferHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		18996518262325B500146FBB /* VImageBufferWrapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VImageBufferWrapperTests.swift; sourceTree = "<group>"; };
 		18A938DD2621B798007BB7DE /* VImageBufferHelper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VImageBufferHelper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		18A938E02621B798007BB7DE /* VImageBufferHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VImageBufferHelper.h; sourceTree = "<group>"; };
 		18A938E12621B798007BB7DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				18A938EB2621B798007BB7DE /* VImageBufferHelperTests.swift */,
 				18A938ED2621B798007BB7DE /* Info.plist */,
 				18A939062621D141007BB7DE /* VImageBufferWeakWrapperTests.swift */,
+				18996518262325B500146FBB /* VImageBufferWrapperTests.swift */,
 			);
 			path = VImageBufferHelperTests;
 			sourceTree = "<group>";
@@ -230,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				18A939072621D141007BB7DE /* VImageBufferWeakWrapperTests.swift in Sources */,
+				18996519262325B500146FBB /* VImageBufferWrapperTests.swift in Sources */,
 				18A938EC2621B798007BB7DE /* VImageBufferHelperTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

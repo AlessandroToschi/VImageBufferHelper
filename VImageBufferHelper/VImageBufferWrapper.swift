@@ -25,7 +25,7 @@ public class VImageBufferWrapper{
     public var size: Int { self.rowBytes * self.height }
     
     public var contiguousRowBytes: Int { self.width * self.pixelFormat.bytesPerPixel }
-    public var contiguousSize: Int { self.contiguousRowBytes * self.width}
+    public var contiguousSize: Int { self.contiguousRowBytes * self.height}
     public var isContiguous: Bool { self.rowBytes == self.contiguousRowBytes }
     
     public var `weak`: VImageBufferWeakWrapper { return VImageBufferWeakWrapper(imageBufferWrapper: self) }
@@ -52,6 +52,8 @@ public class VImageBufferWrapper{
     }
     
     public init(width: Int, height: Int, pixelFormat: VImagePixelFormat, contiguous: Bool = false) {
+        
+        guard width >= 0, height >= 0 else { fatalError("Width and height must be greater or equal to zero") }
         
         let (alignment, rowBytes) = VImageBufferWrapper.rowBytesAndAlignment(width, height, pixelFormat, contiguous)
         let rawPointer = UnsafeMutableRawPointer.allocate(byteCount: width * rowBytes, alignment: alignment)
@@ -87,12 +89,8 @@ public class VImageBufferWrapper{
         
     }
     
-    public func reallocIfNeeded(imageBuffer: vImage_Buffer, pixelFormat: VImagePixelFormat, contiguous: Bool = false) {
-        
-    }
-    
     public func reallocIfNeeded(imageBufferWrapper: VImageBufferWrapper, contiguous: Bool = false) {
-        
+        self.reallocIfNeeded(width: imageBufferWrapper.width, height: imageBufferWrapper.height, pixelFormat: imageBufferWrapper.pixelFormat, contiguous: contiguous)
     }
     
     // MARK: Buffer Pointers
