@@ -7,5 +7,4 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => 'git://github.com/AlessandroToschi/VImageBufferHelper.git'}
   spec.source_files = 'VImageBufferHelper/*'
   spec.requires_arc = true
-  spec.dependency 'Accelerate'
 end
