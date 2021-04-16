@@ -61,8 +61,8 @@ class VImageBufferWrapperTests: XCTestCase {
     }
     
     func testRealloc() {
-        let width = Int.random(in: 0...10)
-        let height = Int.random(in: 0...10)
+        let width = Int.random(in: 1...10)
+        let height = Int.random(in: 1...10)
         
         for pixelFormat in VImagePixelFormat.allCases {
             
@@ -102,8 +102,8 @@ class VImageBufferWrapperTests: XCTestCase {
     }
     
     func testReallocNoAlloc() {
-        let width = Int.random(in: 0...10)
-        let height = Int.random(in: 0...10)
+        let width = Int.random(in: 1...10)
+        let height = Int.random(in: 1...10)
         
         for pixelFormat in VImagePixelFormat.allCases {
             
@@ -165,8 +165,8 @@ class VImageBufferWrapperTests: XCTestCase {
     }
     
     func testReallocContiguousNotContiguous() {
-        let width = Int.random(in: 0...10)
-        let height = Int.random(in: 0...10)
+        let width = Int.random(in: 1...10)
+        let height = Int.random(in: 1...10)
         
         for pixelFormat in VImagePixelFormat.allCases {
             
@@ -206,8 +206,8 @@ class VImageBufferWrapperTests: XCTestCase {
     }
     
     func testReallocNotContiguousContiguous() {
-        let width = Int.random(in: 0...10)
-        let height = Int.random(in: 0...10)
+        let width = Int.random(in: 1...10)
+        let height = Int.random(in: 1...10)
         
         for pixelFormat in VImagePixelFormat.allCases {
             
@@ -276,28 +276,60 @@ class VImageBufferWrapperTests: XCTestCase {
             XCTAssertEqual(image.isContiguous, image.rowBytes == image.contiguousRowBytes)
             XCTAssertEqual(image.pixelFormat, pixelFormat)
             
-            image.reallocIfNeeded(width: width, height: height, pixelFormat: pixelFormat, contiguous: true)
+            image.reallocIfNeeded(width: width2, height: height2, pixelFormat: pixelFormat, contiguous: true)
             
-            XCTAssertEqual(image.width, width)
-            XCTAssertEqual(image.height, height)
-            XCTAssertEqual(image.rowBytes, width * pixelFormat.bytesPerPixel)
-            XCTAssertEqual(image.size, width * height * pixelFormat.bytesPerPixel)
-            XCTAssertEqual(image.contiguousSize, width * height * pixelFormat.bytesPerPixel)
-            XCTAssertEqual(image.contiguousRowBytes, width * pixelFormat.bytesPerPixel)
+            XCTAssertEqual(image.width, width2)
+            XCTAssertEqual(image.height, height2)
+            XCTAssertEqual(image.rowBytes, width2 * pixelFormat.bytesPerPixel)
+            XCTAssertEqual(image.size, width2 * height2 * pixelFormat.bytesPerPixel)
+            XCTAssertEqual(image.contiguousSize, width2 * height2 * pixelFormat.bytesPerPixel)
+            XCTAssertEqual(image.contiguousRowBytes, width2 * pixelFormat.bytesPerPixel)
             XCTAssertEqual(image.isContiguous, image.rowBytes == image.contiguousRowBytes)
             XCTAssertEqual(image.pixelFormat, pixelFormat)
         }
     }
     
-    func testMutableBufferPointer() {
+    func testBufferPointer() {
         let width = Int.random(in: 1...10)
         let height = Int.random(in: 1...10)
         
-        for pixelFormat in VImagePixelFormat.allCases {
-            
-            let image = VImageBufferWrapper(width: width, height: height, pixelFormat: pixelFormat, contiguous: true)
-            let mutableBufferPointer
-            
+        let image = VImageBufferWrapper(width: width, height: height, pixelFormat: .rgba8, contiguous: true)
+        
+        XCTAssertNotNil(image.bufferPointer(type: SIMD4<UInt8>.self))
+        XCTAssertNotNil(image.mutableBufferPointer(type: SIMD4<UInt8>.self))
+        
+        XCTAssertNil(image.bufferPointer(type: UInt8.self))
+        XCTAssertNil(image.mutableBufferPointer(type: UInt8.self))
+        
+        let cImage = VImageBufferWrapper(width: width, height: height, pixelFormat: .rgba8, contiguous: false)
+
+        XCTAssertNil(cImage.bufferPointer(type: SIMD4<UInt8>.self))
+        XCTAssertNil(cImage.mutableBufferPointer(type: SIMD4<UInt8>.self))
+        
+        XCTAssertNil(cImage.bufferPointer(type: UInt8.self))
+        XCTAssertNil(cImage.mutableBufferPointer(type: UInt8.self))
+
+    }
+    
+    func testROI() {
+        
+        let image = VImageBufferWrapper(width: 10, height: 10, pixelFormat: .abgr8)
+        
+        var invalidRects: [CGRect] = []
+        invalidRects.append(CGRect(x: -1, y: 1, width: 1, height: 1))
+        invalidRects.append(CGRect(x: 1, y: 1, width: -1, height: 1))
+        invalidRects.append(CGRect(x: 10, y: 1, width: 1, height: 1))
+        invalidRects.append(CGRect(x: 1, y: 10, width: 1, height: 1))
+        
+        for rect in invalidRects {
+            XCTAssertNil(image.roi(rect: rect))
         }
+        
+        XCTAssertNotNil(image.roi(rect: CGRect(x: 0, y: 0, width: 10, height: 10)))
+        XCTAssertNotNil(image.roi(rect: CGRect(x: 2, y: 2, width: 4, height: 4)))
+
+
+
+        
     }
 }

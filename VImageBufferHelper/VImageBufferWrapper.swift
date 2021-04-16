@@ -8,33 +8,21 @@
 import Foundation
 import Accelerate
 
-public class VImageBufferWrapper{
+public class VImageBufferWrapper: VImageBuffer{
     // MARK: Stored Properties
     
-    public private(set) var imageBuffer: vImage_Buffer
-    public let pixelFormat: VImagePixelFormat
+    public private(set) var buffer: vImage_Buffer
+    public private(set) var pixelFormat: VImagePixelFormat
     
-    // MARK: - Computed Properties
-    
-    public var width: Int { Int(imageBuffer.width) }
-    public var height: Int { Int(imageBuffer.height) }
-    
-    public var count: Int { self.width * self.height }
-    
-    public var rowBytes: Int { imageBuffer.rowBytes }
-    public var size: Int { self.rowBytes * self.height }
-    
-    public var contiguousRowBytes: Int { self.width * self.pixelFormat.bytesPerPixel }
-    public var contiguousSize: Int { self.contiguousRowBytes * self.height}
-    public var isContiguous: Bool { self.rowBytes == self.contiguousRowBytes }
-    
-    public var `weak`: VImageBufferWeakWrapper { return VImageBufferWeakWrapper(imageBufferWrapper: self) }
-    
-    var freeImageBuffer: Bool { true }
+    public var `weak`: VImageBufferWeakWrapper {
+        
+        VImageBufferWeakWrapper(buffer: self.buffer, pixelFormat: self.pixelFormat)
+        
+    }
     
     // MARK: - Static
     
-    private static func rowBytesAndAlignment(_ width: Int, _ height: Int, _ pixelFormat: VImagePixelFormat, _ contiguous: Bool) -> (alignment: Int, rowBytes: Int) {
+    private static func alignmentAndRowBytes(_ width: Int, _ height: Int, _ pixelFormat: VImagePixelFormat, _ contiguous: Bool) -> (alignment: Int, rowBytes: Int) {
         guard !contiguous,
               let preferredSettings = try? vImage_Buffer.preferredAlignmentAndRowBytes(width: width, height: height, bitsPerPixel: UInt32(pixelFormat.bitsPerPixel)) else {
             return (64, width * pixelFormat.bytesPerPixel)
@@ -51,21 +39,26 @@ public class VImageBufferWrapper{
         
     }
     
-    public init(width: Int, height: Int, pixelFormat: VImagePixelFormat, contiguous: Bool = false) {
+    public convenience init(width: Int, height: Int, pixelFormat: VImagePixelFormat, contiguous: Bool = false) {
         
         guard width >= 0, height >= 0 else { fatalError("Width and height must be greater or equal to zero") }
         
-        let (alignment, rowBytes) = VImageBufferWrapper.rowBytesAndAlignment(width, height, pixelFormat, contiguous)
+        let (alignment, rowBytes) = VImageBufferWrapper.alignmentAndRowBytes(width, height, pixelFormat, contiguous)
         let rawPointer = UnsafeMutableRawPointer.allocate(byteCount: width * rowBytes, alignment: alignment)
         
-        self.imageBuffer = vImage_Buffer(data: rawPointer, height: vImagePixelCount(height), width: vImagePixelCount(width), rowBytes: rowBytes)
-        self.pixelFormat = pixelFormat
+        self.init(
+            vImage_Buffer(data: rawPointer,
+                          height: vImagePixelCount(height),
+                          width: vImagePixelCount(width),
+                          rowBytes: rowBytes),
+            pixelFormat
+        )
         
     }
     
-    init(imageBuffer: vImage_Buffer, pixelFormat: VImagePixelFormat) {
+    init(_ buffer: vImage_Buffer, _ pixelFormat: VImagePixelFormat) {
         
-        self.imageBuffer = imageBuffer
+        self.buffer = buffer
         self.pixelFormat = pixelFormat
         
     }
@@ -74,19 +67,25 @@ public class VImageBufferWrapper{
     
     deinit {
         
-        if self.freeImageBuffer {
-            
-            self.imageBuffer.data.deallocate()
-            self.imageBuffer.data = nil
-            
-        }
-
+        self.buffer.free()
+        
     }
     
     // MARK: Realloc
     
     public func reallocIfNeeded(width: Int, height: Int, pixelFormat: VImagePixelFormat, contiguous: Bool = false) {
         
+        guard width > 0, height > 0 else { return }
+        
+        if self.width == width, self.height == height, self.pixelFormat == pixelFormat, self.isContiguous == contiguous { return }
+        
+        self.buffer.free()
+        
+        let (alignment, rowBytes) = VImageBufferWrapper.alignmentAndRowBytes(width, height, pixelFormat, contiguous)
+        let rawPointer = UnsafeMutableRawPointer.allocate(byteCount: width * rowBytes, alignment: alignment)
+        
+        self.buffer = vImage_Buffer(data: rawPointer, height: vImagePixelCount(height), width: vImagePixelCount(width), rowBytes: rowBytes)
+        self.pixelFormat = pixelFormat
     }
     
     public func reallocIfNeeded(imageBufferWrapper: VImageBufferWrapper, contiguous: Bool = false) {
@@ -95,20 +94,20 @@ public class VImageBufferWrapper{
     
     // MARK: Buffer Pointers
     
-    public func mutableBufferPointer<T>(type: T.Type) -> UnsafeMutableBufferPointer<T> {
+    public func mutableBufferPointer<T>(type: T.Type) -> UnsafeMutableBufferPointer<T>? {
         
-        guard self.isContiguous else { fatalError("Buffer pointer can be created only if the underlying memory of the image is contiguous") }
-
-        let mutableRawBufferPointer = UnsafeMutableRawBufferPointer(start: self.imageBuffer.data, count: self.size)
+        guard self.isContiguous, MemoryLayout<T>.size == self.pixelFormat.bytesPerPixel else { return nil }
+        
+        let mutableRawBufferPointer = UnsafeMutableRawBufferPointer(start: self.buffer.data, count: self.size)
         return mutableRawBufferPointer.bindMemory(to: type)
         
     }
     
-    public func bufferPointer<T>(type: T.Type) -> UnsafeBufferPointer<T> {
+    public func bufferPointer<T>(type: T.Type) -> UnsafeBufferPointer<T>? {
         
-        guard self.isContiguous else { fatalError("Buffer pointer can be created only if the underlying memory of the image is contiguous") }
+        guard self.isContiguous, MemoryLayout<T>.size == self.pixelFormat.bytesPerPixel else { return nil }
         
-        let rawBufferPointer = UnsafeRawBufferPointer(start: self.imageBuffer.data, count: self.size)
+        let rawBufferPointer = UnsafeRawBufferPointer(start: self.buffer.data, count: self.size)
         return rawBufferPointer.bindMemory(to: type)
         
     }
@@ -117,14 +116,19 @@ public class VImageBufferWrapper{
     
     public func roi(rect: CGRect) -> VImageBufferWeakWrapper? {
         
-        guard rect.maxX <= CGFloat(self.width), rect.minX >= 0.0,
-              rect.maxY <= CGFloat(self.height), rect.minY >= 0.0 else { return nil }
+        guard rect.origin.x >= 0.0,
+              rect.size.width > 0.0,
+              rect.origin.x + rect.size.width <= CGFloat(self.width),
+              rect.origin.y >= 0.0,
+              rect.size.height > 0.0,
+              rect.origin.y + rect.size.height <= CGFloat(self.height)
+        else { return nil }
         
         let offset = Int(rect.origin.y) * self.rowBytes + Int(rect.origin.x) * self.pixelFormat.bytesPerPixel
-        let roiImageBuffer = vImage_Buffer(data: self.imageBuffer.data.advanced(by: offset), height: vImagePixelCount(rect.height), width: vImagePixelCount(rect.width), rowBytes: self.rowBytes)
+        let roiImageBuffer = vImage_Buffer(data: self.buffer.data.advanced(by: offset), height: vImagePixelCount(rect.height), width: vImagePixelCount(rect.width), rowBytes: self.rowBytes)
         
-        return VImageBufferWeakWrapper(imageBuffer: roiImageBuffer, pixelFormat: self.pixelFormat)
-    
+        return VImageBufferWeakWrapper(buffer: roiImageBuffer, pixelFormat: self.pixelFormat)
+        
     }
     
 }

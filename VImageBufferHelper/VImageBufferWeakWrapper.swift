@@ -8,14 +8,9 @@
 import Foundation
 import Accelerate
 
-public class VImageBufferWeakWrapper: VImageBufferWrapper {
-    override var freeImageBuffer: Bool { false }
+public struct VImageBufferWeakWrapper: VImageBuffer {
     
-    override init(imageBuffer: vImage_Buffer, pixelFormat: VImagePixelFormat) {
-        super.init(imageBuffer: imageBuffer, pixelFormat: pixelFormat)
-    }
+    public private(set) var buffer: vImage_Buffer
+    public private(set) var pixelFormat: VImagePixelFormat
     
-    public init(imageBufferWrapper: VImageBufferWrapper) {
-        super.init(imageBuffer: imageBufferWrapper.imageBuffer, pixelFormat: imageBufferWrapper.pixelFormat)
-    }
 }
