@@ -6,5 +6,5 @@ Pod::Spec.new do |spec|
   spec.author       = 'Alessandro Toschi'
   spec.source       = { :git => 'git://github.com/AlessandroToschi/VImageBufferHelper.git'}
   spec.source_files = 'VImageBufferHelper/*'
-  spec.requires_arc = true
+  spec.ios.deployment_target = '13.0'
 end
